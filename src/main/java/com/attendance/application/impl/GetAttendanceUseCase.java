@@ -12,11 +12,10 @@ import com.attendance.repository.IMemberRepository;
 
 @Component
 public class GetAttendanceUseCase implements IUseCase<GetAttendanceInputDto, GetAttendanceOutputDto> {
-	
-	@Autowired
+
 	private IMemberRepository memberRepo;
-	
-	public void setMemberRepo(IMemberRepository memberRepo) {
+
+	public GetAttendanceUseCase(IMemberRepository memberRepo) {
 		this.memberRepo = memberRepo;
 	}
 

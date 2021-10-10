@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.attendance.domain.Member;
 
-@Component
 public interface IMemberRepository {
 	boolean saveAll(Member[] members);
 	boolean save(Member member);
