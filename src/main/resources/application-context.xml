@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:task="http://www.springframework.org/schema/task"
     xsi:schemaLocation="http://www.springframework.org/schema/beans 
     http://www.springframework.org/schema/beans/spring-beans.xsd 
-    http://www.springframework.org/schema/context/ 
-    http://www.springframework.org/schema/context/spring-context.xsd">
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd ">
     
-    <!-- Use Cases -->
+    <!-- Scan for Rest Annotations -->
+    <context:component-scan base-package="com.attendance" />
+    
+    <aop:aspectj-autoproxy />
+	<mvc:annotation-driven />
+    
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+    
+    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newFixedThreadPool">
+    	<constructor-arg value="10" />
+    </bean>
     
     <!-- Mock Beans - for Unit Testing  -->
-    <bean id="memberMockRepo" class="com.attendance.repository.mock.MemberMockRepository" />
+    <bean name="memberMockRepository" id="memberMockRepository" class="com.attendance.repository.mock.MemberMockRepository" />
 
     <bean id="getAttendanceUseCaseMock" class="com.attendance.application.impl.GetAttendanceUseCase">
-    	<property name="memberRepo" ref="memberMockRepo"></property>
+    	<constructor-arg index="0" name="memberRepo" ref="memberMockRepository"/>
+    </bean>
+    
+    <bean id="feedMembersInfoUseCaseMock" class="com.attendance.application.impl.BatchSaveMemberInformationUseCase">
+    	<constructor-arg index="0" name="memberRepo" ref="memberMockRepository" />
     </bean>
 
+
+	<task:executor id="pool" pool-size="100-200" queue-capacity="100" keep-alive="120" />
+ 	<task:annotation-driven executor="executorService" />
 </beans>
